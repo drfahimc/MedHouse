@@ -1,2 +1,0 @@
-C:/Users/rasal/Desktop/med_house/build/.cxx/Debug/6g2k2n24/x86/CMakeFiles/edit_cache.dir
-C:/Users/rasal/Desktop/med_house/build/.cxx/Debug/6g2k2n24/x86/CMakeFiles/rebuild_cache.dir

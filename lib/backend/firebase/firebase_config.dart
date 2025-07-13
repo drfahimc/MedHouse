@@ -1,18 +1,27 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future initFirebase() async {
   if (kIsWeb) {
     await Firebase.initializeApp(
         options: FirebaseOptions(
-            apiKey: "AIzaSyCot1M8mAEYuElSDUbVgDLDnGBoAbE_jrg",
-            authDomain: "mymcqappbackend.firebaseapp.com",
-            projectId: "mymcqappbackend",
+            apiKey: dotenv.env['firebase_api_key'],
+            authDomain: dotenv.env['authDomain'],
+            projectId: dotenv.env['projectId'],
             storageBucket: "mymcqappbackend.firebasestorage.app",
-            messagingSenderId: "283835755172",
-            appId: "1:283835755172:web:de0e99728ef151203c1431",
-            measurementId: "G-B7H494JWH4"));
+            messagingSenderId: dotenv.env['messagingSenderId'],
+            appId: dotenv.env['appId'],
+            measurementId: dotenv.env['measurementId']));
   } else {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+        options: FirebaseOptions(
+            apiKey: dotenv.env['firebase_api_key'],
+            authDomain: dotenv.env['authDomain'],
+            projectId: dotenv.env['projectId'],
+            storageBucket: dotenv.env['storageBucket'],
+            messagingSenderId: dotenv.env['messagingSenderId'],
+            appId: dotenv.env['appId'],
+            measurementId: dotenv.env['measurementId']));
   }
 }
