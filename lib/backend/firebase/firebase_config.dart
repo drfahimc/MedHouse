@@ -6,22 +6,22 @@ Future initFirebase() async {
   if (kIsWeb) {
     await Firebase.initializeApp(
         options: FirebaseOptions(
-            apiKey: dotenv.env['firebase_api_key'],
-            authDomain: dotenv.env['authDomain'],
-            projectId: dotenv.env['projectId'],
+            apiKey: dotenv.env['FIREBASE_API_KEY']!,
+            authDomain: dotenv.env['AUTH_DOMAIN']!,
+            projectId: dotenv.env['PROJECT_ID']!,
             storageBucket: "mymcqappbackend.firebasestorage.app",
-            messagingSenderId: dotenv.env['messagingSenderId'],
-            appId: dotenv.env['appId'],
-            measurementId: dotenv.env['measurementId']));
+            messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
+            appId: dotenv.env['APP_ID']!,
+            measurementId: dotenv.env['MEASUREMENT_ID']!));
   } else {
     await Firebase.initializeApp(
         options: FirebaseOptions(
-            apiKey: dotenv.env['firebase_api_key'],
-            authDomain: dotenv.env['authDomain'],
-            projectId: dotenv.env['projectId'],
-            storageBucket: dotenv.env['storageBucket'],
-            messagingSenderId: dotenv.env['messagingSenderId'],
-            appId: dotenv.env['appId'],
-            measurementId: dotenv.env['measurementId']));
+            apiKey: dotenv.env['FIREBASE_API_KEY']!,
+            authDomain: dotenv.env['AUTH_DOMAIN']!,
+            projectId: dotenv.env['PROJECT_ID']!,
+            storageBucket: "mymcqappbackend.firebasestorage.app",
+            messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
+            appId: dotenv.env['APP_ID']!,
+            measurementId: dotenv.env['MEASUREMENT_ID']!));
   }
 }

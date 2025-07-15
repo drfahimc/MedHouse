@@ -4,11 +4,16 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import 'dart:math';
+import 'dart:ui';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart'
     as smooth_page_indicator;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+
 import 'mcq_page_model.dart';
 export 'mcq_page_model.dart';
 
@@ -208,59 +213,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
     _model = createModel(context, () => McqPageModel());
 
     animationsMap.addAll({
-      'buttonOnActionTriggerAnimation1': AnimationInfo(
-        trigger: AnimationTrigger.onActionTrigger,
-        applyInitialState: true,
-        effectsBuilder: () => [
-          ScaleEffect(
-            curve: Curves.easeOut,
-            delay: 0.0.ms,
-            duration: 270.0.ms,
-            begin: Offset(1.0, 1.0),
-            end: Offset(1.05, 1.05),
-          ),
-        ],
-      ),
-      'buttonOnActionTriggerAnimation2': AnimationInfo(
-        trigger: AnimationTrigger.onActionTrigger,
-        applyInitialState: true,
-        effectsBuilder: () => [
-          ScaleEffect(
-            curve: Curves.easeOut,
-            delay: 0.0.ms,
-            duration: 270.0.ms,
-            begin: Offset(1.0, 1.0),
-            end: Offset(1.05, 1.05),
-          ),
-        ],
-      ),
-      'buttonOnActionTriggerAnimation3': AnimationInfo(
-        trigger: AnimationTrigger.onActionTrigger,
-        applyInitialState: true,
-        effectsBuilder: () => [
-          ScaleEffect(
-            curve: Curves.easeOut,
-            delay: 0.0.ms,
-            duration: 270.0.ms,
-            begin: Offset(1.0, 1.0),
-            end: Offset(1.05, 1.05),
-          ),
-        ],
-      ),
-      'buttonOnActionTriggerAnimation4': AnimationInfo(
-        trigger: AnimationTrigger.onActionTrigger,
-        applyInitialState: true,
-        effectsBuilder: () => [
-          ScaleEffect(
-            curve: Curves.easeOut,
-            delay: 0.0.ms,
-            duration: 270.0.ms,
-            begin: Offset(1.0, 1.0),
-            end: Offset(1.05, 1.05),
-          ),
-        ],
-      ),
-      'buttonOnActionTriggerAnimation5': AnimationInfo(
+      'buttonOnActionTriggerAnimation': AnimationInfo(
         trigger: AnimationTrigger.onActionTrigger,
         applyInitialState: true,
         effectsBuilder: () => [
@@ -298,7 +251,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
         queryBuilder: (mcqQuestionsRecord) => mcqQuestionsRecord
             .where(
               'topicId',
-              isEqualTo: widget.selectedTopicId,
+              isEqualTo: widget!.selectedTopicId,
             )
             .orderBy('slno'),
       ),
@@ -309,8 +262,8 @@ class _McqPageWidgetState extends State<McqPageWidget>
             backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
             body: Center(
               child: SizedBox(
-                width: 50.0,
-                height: 50.0,
+                width: 50,
+                height: 50,
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(
                     FlutterFlowTheme.of(context).primary,
@@ -331,24 +284,24 @@ class _McqPageWidgetState extends State<McqPageWidget>
             key: scaffoldKey,
             backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
             appBar: PreferredSize(
-              preferredSize: Size.fromHeight(30.0),
+              preferredSize: Size.fromHeight(30),
               child: AppBar(
                 backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
                 automaticallyImplyLeading: false,
                 leading: Align(
-                  alignment: AlignmentDirectional(-1.0, -1.0),
+                  alignment: AlignmentDirectional(-1, -1),
                   child: FlutterFlowIconButton(
                     borderColor: Colors.transparent,
-                    borderRadius: 30.0,
-                    borderWidth: 1.0,
-                    buttonSize: 60.0,
+                    borderRadius: 30,
+                    borderWidth: 1,
+                    buttonSize: 60,
                     hoverColor: Color(0xFF141212),
                     hoverIconColor: Colors.white,
                     hoverBorderColor: Color(0xFFD9D6D6),
                     icon: Icon(
                       Icons.arrow_back_rounded,
                       color: FlutterFlowTheme.of(context).primaryText,
-                      size: 30.0,
+                      size: 30,
                     ),
                     onPressed: () async {
                       context.safePop();
@@ -365,7 +318,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                               .fontStyle,
                         ),
                         color: FlutterFlowTheme.of(context).primaryText,
-                        fontSize: 20.0,
+                        fontSize: 20,
                         letterSpacing: 0.0,
                         fontWeight: FontWeight.w600,
                         fontStyle: FlutterFlowTheme.of(context)
@@ -375,7 +328,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                 ),
                 actions: [],
                 centerTitle: false,
-                elevation: 0.0,
+                elevation: 0,
               ),
             ),
             body: SafeArea(
@@ -390,8 +343,8 @@ class _McqPageWidgetState extends State<McqPageWidget>
                       child: Stack(
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
-                                0.0, 0.0, 0.0, 40.0),
+                            padding:
+                                EdgeInsetsDirectional.fromSTEB(0, 0, 0, 40),
                             child: PageView(
                               controller: _model.pageViewController ??=
                                   PageController(initialPage: 0),
@@ -410,7 +363,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                           child: Padding(
                                             padding:
                                                 EdgeInsetsDirectional.fromSTEB(
-                                                    5.0, 0.0, 5.0, 20.0),
+                                                    5, 0, 5, 20),
                                             child: Container(
                                               width: 385.1,
                                               height: 321.1,
@@ -420,8 +373,8 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                         .secondaryBackground,
                                               ),
                                               child: Align(
-                                                alignment: AlignmentDirectional(
-                                                    0.0, 0.0),
+                                                alignment:
+                                                    AlignmentDirectional(0, 0),
                                                 child: StreamBuilder<
                                                     List<McqQuestionsRecord>>(
                                                   stream:
@@ -433,8 +386,8 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                     if (!snapshot.hasData) {
                                                       return Center(
                                                         child: SizedBox(
-                                                          width: 50.0,
-                                                          height: 50.0,
+                                                          width: 50,
+                                                          height: 50,
                                                           child:
                                                               CircularProgressIndicator(
                                                             valueColor:
@@ -511,14 +464,13 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                       child: Container(
                                         decoration: BoxDecoration(),
                                         child: Stack(
-                                          alignment:
-                                              AlignmentDirectional(0.0, 0.0),
+                                          alignment: AlignmentDirectional(0, 0),
                                           children: [
                                             Align(
                                               alignment: AlignmentDirectional(
                                                   -0.12, -0.26),
                                               child: Padding(
-                                                padding: EdgeInsets.all(2.0),
+                                                padding: EdgeInsets.all(2),
                                                 child: StreamBuilder<
                                                     List<McqQuestionsRecord>>(
                                                   stream:
@@ -537,8 +489,8 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                     if (!snapshot.hasData) {
                                                       return Center(
                                                         child: SizedBox(
-                                                          width: 50.0,
-                                                          height: 50.0,
+                                                          width: 50,
+                                                          height: 50,
                                                           child:
                                                               CircularProgressIndicator(
                                                             valueColor:
@@ -576,22 +528,16 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                           buttonMcqQuestionsRecord!
                                                               .option2,
                                                       options: FFButtonOptions(
-                                                        width: 350.0,
-                                                        height: 40.0,
+                                                        width: 350,
+                                                        height: 40,
                                                         padding:
                                                             EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    16.0,
-                                                                    0.0,
-                                                                    16.0,
-                                                                    0.0),
+                                                                .fromSTEB(16, 0,
+                                                                    16, 0),
                                                         iconPadding:
                                                             EdgeInsetsDirectional
                                                                 .fromSTEB(
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0),
+                                                                    0, 0, 0, 0),
                                                         color:
                                                             Color(0xFF353438),
                                                         textStyle:
@@ -623,14 +569,11 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                                       .titleSmall
                                                                       .fontStyle,
                                                                 ),
-                                                        elevation: 0.0,
+                                                        elevation: 0,
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(8.0),
+                                                                .circular(8),
                                                       ),
-                                                    ).animateOnActionTrigger(
-                                                      animationsMap[
-                                                          'buttonOnActionTriggerAnimation1']!,
                                                     );
                                                   },
                                                 ),
@@ -640,7 +583,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                               alignment: AlignmentDirectional(
                                                   -0.26, -0.78),
                                               child: Padding(
-                                                padding: EdgeInsets.all(2.0),
+                                                padding: EdgeInsets.all(2),
                                                 child: StreamBuilder<
                                                     List<McqQuestionsRecord>>(
                                                   stream:
@@ -659,8 +602,8 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                     if (!snapshot.hasData) {
                                                       return Center(
                                                         child: SizedBox(
-                                                          width: 50.0,
-                                                          height: 50.0,
+                                                          width: 50,
+                                                          height: 50,
                                                           child:
                                                               CircularProgressIndicator(
                                                             valueColor:
@@ -690,37 +633,24 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                             : null;
 
                                                     return FFButtonWidget(
-                                                      onPressed: () async {
-                                                        if (animationsMap[
-                                                                'buttonOnActionTriggerAnimation2'] !=
-                                                            null) {
-                                                          await animationsMap[
-                                                                  'buttonOnActionTriggerAnimation2']!
-                                                              .controller
-                                                              .forward(
-                                                                  from: 0.0);
-                                                        }
+                                                      onPressed: () {
+                                                        print(
+                                                            'Button pressed ...');
                                                       },
                                                       text:
                                                           buttonMcqQuestionsRecord!
                                                               .option1,
                                                       options: FFButtonOptions(
-                                                        width: 350.0,
-                                                        height: 40.0,
+                                                        width: 350,
+                                                        height: 40,
                                                         padding:
                                                             EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    16.0,
-                                                                    0.0,
-                                                                    16.0,
-                                                                    0.0),
+                                                                .fromSTEB(16, 0,
+                                                                    16, 0),
                                                         iconPadding:
                                                             EdgeInsetsDirectional
                                                                 .fromSTEB(
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0),
+                                                                    0, 0, 0, 0),
                                                         color:
                                                             Color(0xFF353438),
                                                         textStyle:
@@ -752,14 +682,11 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                                       .titleSmall
                                                                       .fontStyle,
                                                                 ),
-                                                        elevation: 0.0,
+                                                        elevation: 0,
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(8.0),
+                                                                .circular(8),
                                                       ),
-                                                    ).animateOnActionTrigger(
-                                                      animationsMap[
-                                                          'buttonOnActionTriggerAnimation2']!,
                                                     );
                                                   },
                                                 ),
@@ -769,7 +696,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                               alignment: AlignmentDirectional(
                                                   -0.11, 0.84),
                                               child: Padding(
-                                                padding: EdgeInsets.all(2.0),
+                                                padding: EdgeInsets.all(2),
                                                 child: StreamBuilder<
                                                     List<McqQuestionsRecord>>(
                                                   stream:
@@ -781,8 +708,8 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                     if (!snapshot.hasData) {
                                                       return Center(
                                                         child: SizedBox(
-                                                          width: 50.0,
-                                                          height: 50.0,
+                                                          width: 50,
+                                                          height: 50,
                                                           child:
                                                               CircularProgressIndicator(
                                                             valueColor:
@@ -820,22 +747,16 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                           buttonMcqQuestionsRecord!
                                                               .option4,
                                                       options: FFButtonOptions(
-                                                        width: 350.0,
-                                                        height: 40.0,
+                                                        width: 350,
+                                                        height: 40,
                                                         padding:
                                                             EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    16.0,
-                                                                    0.0,
-                                                                    16.0,
-                                                                    0.0),
+                                                                .fromSTEB(16, 0,
+                                                                    16, 0),
                                                         iconPadding:
                                                             EdgeInsetsDirectional
                                                                 .fromSTEB(
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0),
+                                                                    0, 0, 0, 0),
                                                         color:
                                                             Color(0xFF353438),
                                                         textStyle:
@@ -867,14 +788,11 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                                       .titleSmall
                                                                       .fontStyle,
                                                                 ),
-                                                        elevation: 0.0,
+                                                        elevation: 0,
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(8.0),
+                                                                .circular(8),
                                                       ),
-                                                    ).animateOnActionTrigger(
-                                                      animationsMap[
-                                                          'buttonOnActionTriggerAnimation3']!,
                                                     );
                                                   },
                                                 ),
@@ -884,7 +802,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                               alignment: AlignmentDirectional(
                                                   -0.15, 0.27),
                                               child: Padding(
-                                                padding: EdgeInsets.all(2.0),
+                                                padding: EdgeInsets.all(2),
                                                 child: StreamBuilder<
                                                     List<McqQuestionsRecord>>(
                                                   stream:
@@ -896,8 +814,8 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                     if (!snapshot.hasData) {
                                                       return Center(
                                                         child: SizedBox(
-                                                          width: 50.0,
-                                                          height: 50.0,
+                                                          width: 50,
+                                                          height: 50,
                                                           child:
                                                               CircularProgressIndicator(
                                                             valueColor:
@@ -935,22 +853,16 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                           buttonMcqQuestionsRecord!
                                                               .option3,
                                                       options: FFButtonOptions(
-                                                        width: 350.0,
-                                                        height: 40.0,
+                                                        width: 350,
+                                                        height: 40,
                                                         padding:
                                                             EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    16.0,
-                                                                    0.0,
-                                                                    16.0,
-                                                                    0.0),
+                                                                .fromSTEB(16, 0,
+                                                                    16, 0),
                                                         iconPadding:
                                                             EdgeInsetsDirectional
                                                                 .fromSTEB(
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0),
+                                                                    0, 0, 0, 0),
                                                         color:
                                                             Color(0xFF353438),
                                                         textStyle:
@@ -982,14 +894,11 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                                       .titleSmall
                                                                       .fontStyle,
                                                                 ),
-                                                        elevation: 0.0,
+                                                        elevation: 0,
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(8.0),
+                                                                .circular(8),
                                                       ),
-                                                    ).animateOnActionTrigger(
-                                                      animationsMap[
-                                                          'buttonOnActionTriggerAnimation4']!,
                                                     );
                                                   },
                                                 ),
@@ -999,7 +908,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                               alignment: AlignmentDirectional(
                                                   -0.89, 0.8),
                                               child: Padding(
-                                                padding: EdgeInsets.all(2.0),
+                                                padding: EdgeInsets.all(2),
                                                 child: Theme(
                                                   data: ThemeData(
                                                     checkboxTheme:
@@ -1013,7 +922,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                           RoundedRectangleBorder(
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(4.0),
+                                                                .circular(4),
                                                       ),
                                                     ),
                                                     unselectedWidgetColor:
@@ -1032,7 +941,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                           newValue!);
                                                       if (newValue!) {
                                                         safeSetState(() {
-                                                          _model.checkboxValue1 =
+                                                          _model.checkboxValue4 =
                                                               true;
                                                         });
                                                       }
@@ -1045,7 +954,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                             width: 2,
                                                             color: FlutterFlowTheme
                                                                     .of(context)
-                                                                .alternate,
+                                                                .alternate!,
                                                           )
                                                         : null,
                                                     activeColor:
@@ -1064,7 +973,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                               alignment: AlignmentDirectional(
                                                   -0.89, -0.75),
                                               child: Padding(
-                                                padding: EdgeInsets.all(2.0),
+                                                padding: EdgeInsets.all(2),
                                                 child: Theme(
                                                   data: ThemeData(
                                                     checkboxTheme:
@@ -1078,7 +987,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                           RoundedRectangleBorder(
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(4.0),
+                                                                .circular(4),
                                                       ),
                                                     ),
                                                     unselectedWidgetColor:
@@ -1097,7 +1006,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                           newValue!);
                                                       if (newValue!) {
                                                         safeSetState(() {
-                                                          _model.checkboxValue2 =
+                                                          _model.checkboxValue1 =
                                                               true;
                                                         });
                                                       }
@@ -1110,7 +1019,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                             width: 2,
                                                             color: FlutterFlowTheme
                                                                     .of(context)
-                                                                .alternate,
+                                                                .alternate!,
                                                           )
                                                         : null,
                                                     activeColor:
@@ -1129,7 +1038,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                               alignment: AlignmentDirectional(
                                                   -0.89, -0.24),
                                               child: Padding(
-                                                padding: EdgeInsets.all(2.0),
+                                                padding: EdgeInsets.all(2),
                                                 child: Theme(
                                                   data: ThemeData(
                                                     checkboxTheme:
@@ -1143,7 +1052,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                           RoundedRectangleBorder(
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(4.0),
+                                                                .circular(4),
                                                       ),
                                                     ),
                                                     unselectedWidgetColor:
@@ -1162,7 +1071,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                           newValue!);
                                                       if (newValue!) {
                                                         safeSetState(() {
-                                                          _model.checkboxValue3 =
+                                                          _model.checkboxValue1 =
                                                               true;
                                                         });
                                                       }
@@ -1175,7 +1084,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                             width: 2,
                                                             color: FlutterFlowTheme
                                                                     .of(context)
-                                                                .alternate,
+                                                                .alternate!,
                                                           )
                                                         : null,
                                                     activeColor:
@@ -1194,7 +1103,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                               alignment: AlignmentDirectional(
                                                   -0.89, 0.27),
                                               child: Padding(
-                                                padding: EdgeInsets.all(2.0),
+                                                padding: EdgeInsets.all(2),
                                                 child: Theme(
                                                   data: ThemeData(
                                                     checkboxTheme:
@@ -1208,7 +1117,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                           RoundedRectangleBorder(
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(4.0),
+                                                                .circular(4),
                                                       ),
                                                     ),
                                                     unselectedWidgetColor:
@@ -1227,7 +1136,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                           newValue!);
                                                       if (newValue!) {
                                                         safeSetState(() {
-                                                          _model.checkboxValue4 =
+                                                          _model.checkboxValue3 =
                                                               true;
                                                         });
                                                       }
@@ -1240,7 +1149,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                             width: 2,
                                                             color: FlutterFlowTheme
                                                                     .of(context)
-                                                                .alternate,
+                                                                .alternate!,
                                                           )
                                                         : null,
                                                     activeColor:
@@ -1265,8 +1174,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                           MainAxisAlignment.start,
                                       children: [
                                         Align(
-                                          alignment:
-                                              AlignmentDirectional(0.0, 1.0),
+                                          alignment: AlignmentDirectional(0, 1),
                                           child: Container(
                                             height: 65.71,
                                             child: Stack(
@@ -1287,8 +1195,8 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                       if (!snapshot.hasData) {
                                                         return Center(
                                                           child: SizedBox(
-                                                            width: 50.0,
-                                                            height: 50.0,
+                                                            width: 50,
+                                                            height: 50,
                                                             child:
                                                                 CircularProgressIndicator(
                                                               valueColor:
@@ -1328,18 +1236,12 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                           height: 55.5,
                                                           padding:
                                                               EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                      16.0,
-                                                                      0.0,
-                                                                      16.0,
-                                                                      0.0),
+                                                                  .fromSTEB(16,
+                                                                      0, 16, 0),
                                                           iconPadding:
                                                               EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                      0.0,
-                                                                      0.0,
-                                                                      0.0,
-                                                                      0.0),
+                                                                  .fromSTEB(0,
+                                                                      0, 0, 0),
                                                           color:
                                                               Color(0xFF353438),
                                                           textStyle:
@@ -1361,7 +1263,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                                     color: Colors
                                                                         .white,
                                                                     fontSize:
-                                                                        25.0,
+                                                                        25,
                                                                     letterSpacing:
                                                                         0.0,
                                                                     fontWeight: FlutterFlowTheme.of(
@@ -1373,15 +1275,14 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                                         .titleSmall
                                                                         .fontStyle,
                                                                   ),
-                                                          elevation: 10.0,
+                                                          elevation: 10,
                                                           borderSide:
                                                               BorderSide(
-                                                            width: 0.0,
+                                                            width: 0,
                                                           ),
                                                           borderRadius:
                                                               BorderRadius
-                                                                  .circular(
-                                                                      24.0),
+                                                                  .circular(24),
                                                         ),
                                                       );
                                                     },
@@ -1403,8 +1304,8 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                       if (!snapshot.hasData) {
                                                         return Center(
                                                           child: SizedBox(
-                                                            width: 50.0,
-                                                            height: 50.0,
+                                                            width: 50,
+                                                            height: 50,
                                                             child:
                                                                 CircularProgressIndicator(
                                                               valueColor:
@@ -1443,22 +1344,16 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                                 .correctAnswer,
                                                         options:
                                                             FFButtonOptions(
-                                                          width: 150.0,
-                                                          height: 40.0,
+                                                          width: 150,
+                                                          height: 40,
                                                           padding:
                                                               EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                      16.0,
-                                                                      0.0,
-                                                                      16.0,
-                                                                      0.0),
+                                                                  .fromSTEB(16,
+                                                                      0, 16, 0),
                                                           iconPadding:
                                                               EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                      0.0,
-                                                                      0.0,
-                                                                      0.0,
-                                                                      0.0),
+                                                                  .fromSTEB(0,
+                                                                      0, 0, 0),
                                                           color:
                                                               Color(0xFF353438),
                                                           textStyle:
@@ -1477,7 +1372,7 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                                           .fontStyle,
                                                                     ),
                                                                     fontSize:
-                                                                        80.0,
+                                                                        80,
                                                                     letterSpacing:
                                                                         0.0,
                                                                     fontWeight:
@@ -1488,24 +1383,79 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                                                         .titleMedium
                                                                         .fontStyle,
                                                                   ),
-                                                          elevation: 0.0,
+                                                          elevation: 0,
                                                           borderRadius:
                                                               BorderRadius
-                                                                  .circular(
-                                                                      8.0),
+                                                                  .circular(8),
                                                         ),
                                                       ).animateOnActionTrigger(
                                                         animationsMap[
-                                                            'buttonOnActionTriggerAnimation5']!,
+                                                            'buttonOnActionTriggerAnimation']!,
                                                       );
                                                     },
+                                                  ),
+                                                ),
+                                                Align(
+                                                  alignment:
+                                                      AlignmentDirectional(
+                                                          -0.94, -0.2),
+                                                  child: FFButtonWidget(
+                                                    onPressed: () {
+                                                      print(
+                                                          'Button pressed ...');
+                                                    },
+                                                    text: 'Game Mode\n',
+                                                    options: FFButtonOptions(
+                                                      width: 99,
+                                                      height: 101.8,
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  16, 0, 16, 0),
+                                                      iconPadding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  0, 0, 0, 0),
+                                                      color: Color(0xFF961511),
+                                                      textStyle:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .titleMedium
+                                                              .override(
+                                                                font: GoogleFonts
+                                                                    .figtree(
+                                                                  fontWeight: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .titleMedium
+                                                                      .fontWeight,
+                                                                  fontStyle: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .titleMedium
+                                                                      .fontStyle,
+                                                                ),
+                                                                letterSpacing:
+                                                                    0.0,
+                                                                fontWeight: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .titleMedium
+                                                                    .fontWeight,
+                                                                fontStyle: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .titleMedium
+                                                                    .fontStyle,
+                                                              ),
+                                                      elevation: 40,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              24),
+                                                    ),
                                                   ),
                                                 ),
                                               ],
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 0.0)),
+                                      ].divide(SizedBox(height: 0)),
                                     ),
                                   ],
                                 ),
@@ -1513,10 +1463,10 @@ class _McqPageWidgetState extends State<McqPageWidget>
                             ),
                           ),
                           Align(
-                            alignment: AlignmentDirectional(0.0, 1.0),
+                            alignment: AlignmentDirectional(0, 1),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  0.0, 0.0, 0.0, 16.0),
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
                               child: smooth_page_indicator.SmoothPageIndicator(
                                 controller: _model.pageViewController ??=
                                     PageController(initialPage: 0),
@@ -1532,10 +1482,10 @@ class _McqPageWidgetState extends State<McqPageWidget>
                                   safeSetState(() {});
                                 },
                                 effect: smooth_page_indicator.SlideEffect(
-                                  spacing: 8.0,
-                                  radius: 8.0,
-                                  dotWidth: 8.0,
-                                  dotHeight: 8.0,
+                                  spacing: 8,
+                                  radius: 8,
+                                  dotWidth: 8,
+                                  dotHeight: 8,
                                   dotColor:
                                       FlutterFlowTheme.of(context).accent1,
                                   activeDotColor:

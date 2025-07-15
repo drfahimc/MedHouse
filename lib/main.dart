@@ -4,16 +4,23 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'backend/firebase/firebase_config.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GoRouter.optionURLReflectsImperativeAPIs = true;
   usePathUrlStrategy();
 
+  print("loading dotenv");
+  await dotenv.load(fileName: ".env");
+  print("dotenv loaded");
+ 
+  print("initializing firebase");
   await initFirebase();
+  print("firebase initialized");
 
   await FlutterFlowTheme.initialize();
 
@@ -21,8 +28,10 @@ void main() async {
   await appState.initializePersistedState();
 
   // Start final custom actions code
-  ();
+  //();
   // End final custom actions code
+
+
 
   runApp(ChangeNotifierProvider(
     create: (context) => appState,
