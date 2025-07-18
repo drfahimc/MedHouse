@@ -47,6 +47,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         FocusScope.of(context).unfocus();
         FocusManager.instance.primaryFocus?.unfocus();
       },
+      
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).tertiary,
@@ -58,8 +59,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  height: 715.0,
+                Expanded(
                   child: Stack(
                     children: [
                       Align(
@@ -168,8 +168,8 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                             color: FlutterFlowTheme.of(context).info,
                             size: 24.0,
                           ),
-                          onPressed: () {
-                            print('IconButton pressed ...');
+                          onPressed: () async {
+                            context.safePop();
                           },
                         ),
                       ),

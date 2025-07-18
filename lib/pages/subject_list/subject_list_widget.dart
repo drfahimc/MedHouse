@@ -7,65 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'subject_list_model.dart';
 export 'subject_list_model.dart';
 
-/// Create a **scrollable page** titled `Subjects`
-/// - Add **20 buttons**, one for each MBBS subject
-/// - Each button should:
-///   - Be **short in height** (~48 px)
-///   - Be shaped as a **flat rectangle** with slightly rounded corners
-///   - Have **minimal padding and margin** to reduce scrolling
-///   - Display the **subject name centered** in the button
-///   - Use **#1a155d** as the **primary button color** and **white** as the
-/// **text color** (secondary color)
-///   - Include **button tap animation** (e.g., ripple or scale effect)
-///   - **Navigate** to a corresponding page when tapped
-///
-/// #### 🔍 Search Functionality:
-///
-/// - Include a **search bar** at the top of the page
-/// - Typing in the search bar should dynamically filter the list of subjects
-/// (out of the 20 listed below)
-///
-/// #### 📱 Responsive Layout:
-///
-/// - On **phones and tablets**, each button should take up **full width**
-/// (left to right) of the screen.
-///
-/// - On **web view**, buttons should be of a **standard fixed width**, just
-/// enough to fit the full subject name cleanly. Arrange buttons in a grid or
-/// column so they look neat and evenly aligned.
-///
-/// #### 🎯 Navigation:
-///
-/// Each button should link to its respective subject page. For example:
-/// - Anatomy → `AnatomyPage`
-/// - Physiology → `PhysiologyPage`
-///
-/// Each **subject page** will later be updated to display a **list of
-/// topics** for that subject, displayed in a similar list style, each linking
-/// to MCQ pages.
-///
-/// #### 📚 Subject List (20 Total):
-///
-/// 1. Anatomy
-/// 2. Physiology
-/// 3. Biochemistry
-/// 4. Pathology
-/// 5. Microbiology
-/// 6. Pharmacology
-/// 7. Forensic Medicine
-/// 8. Community Medicine
-/// 9. Ophthalmology
-/// 10. ENT
-/// 11. General Medicine
-/// 12. General Surgery
-/// 13. Obstetrics & Gynaecology
-/// 14. Pediatrics
-/// 15. Orthopaedics
-/// 16. Dermatology
-/// 17. Psychiatry
-/// 18. Respiratory Medicine
-/// 19. Radiology
-/// 20. Anaesthesia
+
 class SubjectListWidget extends StatefulWidget {
   const SubjectListWidget({super.key});
 

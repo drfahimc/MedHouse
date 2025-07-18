@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'backend/firebase/firebase_config.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 
 Future<void> main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
   GoRouter.optionURLReflectsImperativeAPIs = true;
   usePathUrlStrategy();
@@ -17,10 +19,10 @@ Future<void> main() async {
   print("loading dotenv");
   await dotenv.load(fileName: ".env");
   print("dotenv loaded");
- 
-  print("initializing firebase");
+
+  print('Before init: ${Firebase.apps}');
   await initFirebase();
-  print("firebase initialized");
+  print('After init: ${Firebase.apps}');
 
   await FlutterFlowTheme.initialize();
 

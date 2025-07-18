@@ -9,6 +9,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 
 import '/index.dart';
 
+
 export 'package:go_router/go_router.dart';
 export 'serialization_util.dart';
 
@@ -63,15 +64,20 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => PathologyTopicDrBhaWidget(),
         ),
         FFRoute(
-          name: McqPageWidget.routeName,
-          path: McqPageWidget.routePath,
-          builder: (context, params) => McqPageWidget(
-            selectedTopicId: params.getParam(
-              'selectedTopicId',
-              ParamType.String,
-            ),
+          name: StudyPageWidget.routeName,
+          path: StudyPageWidget.routePath,
+          builder: (context, params) => StudyPageWidget(
+            // selectedTopicId: params.getParam(
+            //   'selectedTopicId',
+            //   ParamType.String,
+            // ),
           ),
-        )
+        ),
+        FFRoute(
+          name: GamemodeWidget.routeName,
+          path: GamemodeWidget.routePath,
+          builder: (context, params) => GamemodeWidget(),
+        ),
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
 
