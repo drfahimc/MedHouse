@@ -1,3 +1,5 @@
+//import 'dart:nativewrappers/_internal/vm/lib/internal_patch.dart';
+
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -9,7 +11,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-
+import '../mcq_page/mcq_questions.dart';
 import 'study_page_model.dart';
 export 'study_page_model.dart';
 
@@ -76,11 +78,32 @@ class _StudyPageWidgetState extends State<StudyPageWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  Future<List<McqQuestion>> fetchMcqQuestions() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('mcq_questions')
+        .orderBy('qsno') // Optional: sort by question number
+        .get();
+
+    return snapshot.docs
+        .map((doc) => McqQuestion.fromJson(doc.data()))
+        .toList();
+  }
+
+  List<McqQuestion> questions = [];
+  int currentIndex = 0;
+
+  Future<void> loadQuestions() async {
+    final fetched = await fetchMcqQuestions();
+    print('Fetched questions: $fetched');
+    print('Fetched questions: ${fetched.map((q) => q.question).toList()}');
+    setState(() => questions = fetched);
+  }
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => StudyPageModel());
-
+    loadQuestions();
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
@@ -91,8 +114,22 @@ class _StudyPageWidgetState extends State<StudyPageWidget> {
     super.dispose();
   }
 
+  void showNext() {
+    if (currentIndex < questions.length - 1) {
+      setState(() => currentIndex++);
+    }
+  }
+
+  void showPrevious(){
+    if(currentIndex > 0){
+      setState(() => currentIndex--);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final q = questions[currentIndex];
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -164,505 +201,189 @@ class _StudyPageWidgetState extends State<StudyPageWidget> {
                       ),
                       child: Padding(
                         padding: EdgeInsets.all(8),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(
-                              child: StreamBuilder<List<McqQuestionsRecord>>(
-                                stream: queryMcqQuestionsRecord(
-                                  singleRecord: true,
-                                ),
-                                builder: (context, snapshot) {
-                                  // Customize what your widget looks like when it's loading.
-                                  if (!snapshot.hasData) {
-                                    return Center(
-                                      child: SizedBox(
-                                        width: 50,
-                                        height: 50,
-                                        child: CircularProgressIndicator(
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                            FlutterFlowTheme.of(context)
-                                                .primary,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                  List<McqQuestionsRecord>
-                                      textMcqQuestionsRecordList =
-                                      snapshot.data!;
-                                  final textMcqQuestionsRecord =
-                                      textMcqQuestionsRecordList.isNotEmpty
-                                          ? textMcqQuestionsRecordList.first
-                                          : null;
-
-                                  return AutoSizeText(
-                                    valueOrDefault<String>(
-                                      textMcqQuestionsRecord?.questionText,
-                                      'null',
+                        child: questions.isEmpty
+                            ? Center(
+                                child: SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      FlutterFlowTheme.of(context).primary,
                                     ),
-                                    style: FlutterFlowTheme.of(context)
-                                        .headlineSmall
-                                        .override(
-                                          font: GoogleFonts.figtree(
+                                  ),
+                                ),
+                              )
+                            : Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Expanded(
+                                    child: AutoSizeText(
+                                      questions[currentIndex].question ?? '',
+                                      style: FlutterFlowTheme.of(context)
+                                          .headlineSmall
+                                          .override(
+                                            font: GoogleFonts.figtree(
+                                              fontWeight: FontWeight.w500,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .headlineSmall
+                                                      .fontStyle,
+                                            ),
+                                            color: FlutterFlowTheme.of(context)
+                                                .primaryText,
+                                            letterSpacing: 0.0,
                                             fontWeight: FontWeight.w500,
                                             fontStyle:
                                                 FlutterFlowTheme.of(context)
                                                     .headlineSmall
                                                     .fontStyle,
+                                            lineHeight: 1.4,
                                           ),
-                                          color: FlutterFlowTheme.of(context)
-                                              .primaryText,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FontWeight.w500,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .headlineSmall
-                                                  .fontStyle,
-                                          lineHeight: 1.4,
-                                        ),
-                                  );
-                                },
+                                    ),
+                                  ),
+                                ].divide(SizedBox(height: 20)),
                               ),
-                            ),
-                          ].divide(SizedBox(height: 20)),
-                        ),
                       ),
                     ),
                   ),
                 ),
                 Expanded(
-                  child: StreamBuilder<List<McqQuestionsRecord>>(
-                    stream: queryMcqQuestionsRecord(
-                      singleRecord: true,
-                    ),
-                    builder: (context, snapshot) {
-                      // Customize what your widget looks like when it's loading.
-                      if (!snapshot.hasData) {
-                        return Center(
-                          child: SizedBox(
-                            width: 50,
-                            height: 50,
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                FlutterFlowTheme.of(context).primaryText,
-                              ),
-                            ),
+                  child: questions.isEmpty
+                      ? Container()
+                      : SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              for (int i = 0; i < 4; i++)
+                                Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: FlutterFlowTheme.of(context)
+                                            .alternate,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(12),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Theme(
+                                            data: ThemeData(
+                                              checkboxTheme: CheckboxThemeData(
+                                                visualDensity:
+                                                    VisualDensity.compact,
+                                                materialTapTargetSize:
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                ),
+                                              ),
+                                              unselectedWidgetColor:
+                                                  FlutterFlowTheme.of(context)
+                                                      .alternate,
+                                            ),
+                                            child: Checkbox(
+                                              value: i == 0
+                                                  ? _model.checkboxValue1 ??=
+                                                      false
+                                                  : i == 1
+                                                      ? _model.checkboxValue2 ??=
+                                                          false
+                                                      : i == 2
+                                                          ? _model.checkboxValue3 ??=
+                                                              false
+                                                          : _model.checkboxValue4 ??=
+                                                              false,
+                                              onChanged: (newValue) async {
+                                                setState(() {
+                                                  _model.checkboxValue1 = i == 0
+                                                      ? newValue!
+                                                      : false;
+                                                  _model.checkboxValue2 = i == 1
+                                                      ? newValue!
+                                                      : false;
+                                                  _model.checkboxValue3 = i == 2
+                                                      ? newValue!
+                                                      : false;
+                                                  _model.checkboxValue4 = i == 3
+                                                      ? newValue!
+                                                      : false;
+                                                });
+                                              },
+                                              side:
+                                                  (FlutterFlowTheme.of(context)
+                                                              .alternate !=
+                                                          null)
+                                                      ? BorderSide(
+                                                          width: 2,
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .alternate!,
+                                                        )
+                                                      : null,
+                                              activeColor:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primary,
+                                              checkColor:
+                                                  FlutterFlowTheme.of(context)
+                                                      .info,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              questions[currentIndex]
+                                                      .options[i] ??
+                                                  '',
+                                              style: FlutterFlowTheme.of(
+                                                      context)
+                                                  .bodyLarge
+                                                  .override(
+                                                    font: GoogleFonts.figtree(
+                                                      fontWeight:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .bodyLarge
+                                                              .fontWeight,
+                                                      fontStyle:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .bodyLarge
+                                                              .fontStyle,
+                                                    ),
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .primaryText,
+                                                    letterSpacing: 0.0,
+                                                    fontWeight:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyLarge
+                                                            .fontWeight,
+                                                    fontStyle:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyLarge
+                                                            .fontStyle,
+                                                  ),
+                                            ),
+                                          ),
+                                        ].divide(SizedBox(width: 12)),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ].divide(SizedBox(height: 5)),
                           ),
-                        );
-                      }
-                      List<McqQuestionsRecord> columnMcqQuestionsRecordList =
-                          snapshot.data!;
-                      // Return an empty Container when the item does not exist.
-                      if (snapshot.data!.isEmpty) {
-                        return Container();
-                      }
-                      final columnMcqQuestionsRecord =
-                          columnMcqQuestionsRecordList.isNotEmpty
-                              ? columnMcqQuestionsRecordList.first
-                              : null;
-
-                      return SingleChildScrollView(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: FlutterFlowTheme.of(context)
-                                      .secondaryBackground,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color:
-                                        FlutterFlowTheme.of(context).alternate,
-                                    width: 2,
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(12),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Theme(
-                                        data: ThemeData(
-                                          checkboxTheme: CheckboxThemeData(
-                                            visualDensity:
-                                                VisualDensity.compact,
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize
-                                                    .shrinkWrap,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
-                                            ),
-                                          ),
-                                          unselectedWidgetColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .alternate,
-                                        ),
-                                        child: Checkbox(
-                                          value: _model.checkboxValue1 ??=
-                                              false,
-                                          onChanged: (newValue) async {
-                                            safeSetState(() => _model
-                                                .checkboxValue1 = newValue!);
-                                          },
-                                          side: (FlutterFlowTheme.of(context)
-                                                      .alternate !=
-                                                  null)
-                                              ? BorderSide(
-                                                  width: 2,
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .alternate!,
-                                                )
-                                              : null,
-                                          activeColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .primary,
-                                          checkColor:
-                                              FlutterFlowTheme.of(context).info,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          valueOrDefault<String>(
-                                            columnMcqQuestionsRecord?.option1,
-                                            '0',
-                                          ),
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                font: GoogleFonts.figtree(
-                                                  fontWeight:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyLarge
-                                                          .fontWeight,
-                                                  fontStyle:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMedium
-                                                          .fontStyle,
-                                                ),
-                                                color: FlutterFlowTheme.of(context).primaryText,
-                                                letterSpacing: 0.0,
-                                                fontWeight:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .fontWeight,
-                                                fontStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .fontStyle,
-                                              ),
-                                        ),
-                                      ),
-                                    ].divide(SizedBox(width: 12)),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: FlutterFlowTheme.of(context)
-                                      .secondaryBackground,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color:
-                                        FlutterFlowTheme.of(context).alternate,
-                                    width: 2,
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(12),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Theme(
-                                        data: ThemeData(
-                                          checkboxTheme: CheckboxThemeData(
-                                            visualDensity:
-                                                VisualDensity.compact,
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize
-                                                    .shrinkWrap,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
-                                            ),
-                                          ),
-                                          unselectedWidgetColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .alternate,
-                                        ),
-                                        child: Checkbox(
-                                          value: _model.checkboxValue2 ??=
-                                              false,
-                                          onChanged: (newValue) async {
-                                            safeSetState(() => _model
-                                                .checkboxValue2 = newValue!);
-                                          },
-                                          side: (FlutterFlowTheme.of(context)
-                                                      .alternate !=
-                                                  null)
-                                              ? BorderSide(
-                                                  width: 2,
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .alternate!,
-                                                )
-                                              : null,
-                                          activeColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .primary,
-                                          checkColor:
-                                              FlutterFlowTheme.of(context).info,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          valueOrDefault<String>(
-                                            columnMcqQuestionsRecord?.option2,
-                                            '0',
-                                          ),
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyLarge
-                                              .override(
-                                                font: GoogleFonts.figtree(
-                                                  fontWeight:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyLarge
-                                                          .fontWeight,
-                                                  fontStyle:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyLarge
-                                                          .fontStyle,
-                                                ),
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primaryText,
-                                                letterSpacing: 0.0,
-                                                fontWeight:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyLarge
-                                                        .fontWeight,
-                                                fontStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyLarge
-                                                        .fontStyle,
-                                              ),
-                                        ),
-                                      ),
-                                    ].divide(SizedBox(width: 12)),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: FlutterFlowTheme.of(context)
-                                      .secondaryBackground,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: FlutterFlowTheme.of(context).alternate,
-                                    width: 2,
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(12),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Theme(
-                                        data: ThemeData(
-                                          checkboxTheme: CheckboxThemeData(
-                                            visualDensity:
-                                                VisualDensity.compact,
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize
-                                                    .shrinkWrap,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
-                                            ),
-                                          ),
-                                          unselectedWidgetColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .alternate,
-                                        ),
-                                        child: Checkbox(
-                                          value: _model.checkboxValue3 ??=
-                                              false,
-                                          onChanged: (newValue) async {
-                                            safeSetState(() => _model
-                                                .checkboxValue3 = newValue!);
-                                          },
-                                          side: (FlutterFlowTheme.of(context)
-                                                      .alternate !=
-                                                  null)
-                                              ? BorderSide(
-                                                  width: 2,
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .alternate!,
-                                                )
-                                              : null,
-                                          activeColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .primary,
-                                          checkColor:
-                                              FlutterFlowTheme.of(context).info,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          valueOrDefault<String>(
-                                            columnMcqQuestionsRecord?.option3,
-                                            '0',
-                                          ),
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyLarge
-                                              .override(
-                                                font: GoogleFonts.figtree(
-                                                  fontWeight: FlutterFlowTheme.of(context).bodyLarge.fontWeight,
-                                                  fontStyle:
-                                                      FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                ),
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primaryText,
-                                                letterSpacing: 0.0,
-                                                fontWeight: FontWeight.w500,
-                                                fontStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyLarge
-                                                        .fontStyle,
-                                              ),
-                                        ),
-                                      ),
-                                    ].divide(SizedBox(width: 12)),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: FlutterFlowTheme.of(context)
-                                      .secondaryBackground,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color:
-                                        FlutterFlowTheme.of(context).alternate,
-                                    width: 2,
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(12),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Theme(
-                                        data: ThemeData(
-                                          checkboxTheme: CheckboxThemeData(
-                                            visualDensity:
-                                                VisualDensity.compact,
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize
-                                                    .shrinkWrap,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
-                                            ),
-                                          ),
-                                          unselectedWidgetColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .alternate,
-                                        ),
-                                        child: Checkbox(
-                                          value: _model.checkboxValue4 ??=
-                                              false,
-                                          onChanged: (newValue) async {
-                                            safeSetState(() => _model
-                                                .checkboxValue4 = newValue!);
-                                          },
-                                          side: (FlutterFlowTheme.of(context)
-                                                      .alternate !=
-                                                  null)
-                                              ? BorderSide(
-                                                  width: 2,
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .alternate!,
-                                                )
-                                              : null,
-                                          activeColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .primary,
-                                          checkColor:
-                                              FlutterFlowTheme.of(context).info,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          valueOrDefault<String>(
-                                            columnMcqQuestionsRecord?.option4,
-                                            '0',
-                                          ),
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyLarge
-                                              .override(
-                                                font: GoogleFonts.figtree(
-                                                  fontWeight:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyLarge
-                                                          .fontWeight,
-                                                  fontStyle:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyLarge
-                                                          .fontStyle,
-                                                ),
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primaryText,
-                                                letterSpacing: 0.0,
-                                                fontWeight:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyLarge
-                                                        .fontWeight,
-                                                fontStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyLarge
-                                                        .fontStyle,
-                                              ),
-                                        ),
-                                      ),
-                                    ].divide(SizedBox(width: 12)),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ].divide(SizedBox(height: 5)),
                         ),
-                      );
-                    },
-                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.all(10),
@@ -703,7 +424,9 @@ class _StudyPageWidgetState extends State<StudyPageWidget> {
                                   .titleMedium
                                   .override(
                                     font: GoogleFonts.figtree(
-                                      fontWeight: FlutterFlowTheme.of(context).bodyLarge.fontWeight,
+                                      fontWeight: FlutterFlowTheme.of(context)
+                                          .bodyLarge
+                                          .fontWeight,
                                       fontStyle: FlutterFlowTheme.of(context)
                                           .titleMedium
                                           .fontStyle,
@@ -730,6 +453,7 @@ class _StudyPageWidgetState extends State<StudyPageWidget> {
                               Expanded(
                                 child: FFButtonWidget(
                                   onPressed: () {
+                                    showPrevious();
                                     print('Button pressed ...');
                                   },
                                   text: 'Previous',
@@ -821,6 +545,7 @@ class _StudyPageWidgetState extends State<StudyPageWidget> {
                               Expanded(
                                 child: FFButtonWidget(
                                   onPressed: () {
+                                    showNext();
                                     print('Button pressed ...');
                                   },
                                   text: 'Next',
