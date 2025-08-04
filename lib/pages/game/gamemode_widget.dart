@@ -1,14 +1,13 @@
 import 'dart:async';
-
+import 'package:flame/game.dart';
+import '../../backend/game/dino_run.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import '../mcq_page/mcq_questions.dart';
 import 'gamemode_model.dart';
@@ -34,9 +33,13 @@ class GamemodeWidget extends StatefulWidget {
 class _GamemodeWidgetState extends State<GamemodeWidget> {
   late GamemodeModel _model;
 
-  Timer? _timer;
-  int _timeLeft = 20;
+  // Timer? _timer;
+  // int _timeLeft = 20;
+  int _displayTime = 20;
   bool _gameOver = false;
+  late DinoGame _dinoGame;
+  double _dinoSize = 50.0;
+  int _score = 0;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -56,58 +59,175 @@ class _GamemodeWidgetState extends State<GamemodeWidget> {
 
   Future<void> loadQuestions() async {
     final fetched = await fetchMcqQuestions();
-    print('Fetched questions: $fetched');
-    print('Fetched questions: ${fetched.map((q) => q.question).toList()}');
+    //print('Fetched questions: $fetched');
+    //print('Fetched questions: ${fetched.map((q) => q.question).toList()}');
     setState(() => questions = fetched);
+  }
+
+  void submitAnswer() {
+    if (_model.checkboxValue1 == true) {
+      print('Option 1 selected');
+    }
+    if (_model.checkboxValue2 == true) {
+      print('Option 2 selected');
+    }
+    if (_model.checkboxValue3 == true) {
+      print('Option 3 selected');
+    }
+    if (_model.checkboxValue4 == true) {
+      print('Option 4 selected');
+    }
+  }
+
+  bool checkAnswer() {
+    bool isCorrect = false;
+    if (_model.checkboxValue1 == true) {
+      if (questions[currentIndex].correctAnswer ==
+          questions[currentIndex].options[0]) {
+        isCorrect = true;
+      }
+    }
+    if (_model.checkboxValue2 == true) {
+      if (questions[currentIndex].correctAnswer ==
+          questions[currentIndex].options[1]) {
+        isCorrect = true;
+      }
+    }
+    if (_model.checkboxValue3 == true) {
+      if (questions[currentIndex].correctAnswer ==
+          questions[currentIndex].options[2]) {
+        isCorrect = true;
+      }
+    }
+    if (_model.checkboxValue4 == true) {
+      if (questions[currentIndex].correctAnswer ==
+          questions[currentIndex].options[3]) {
+        isCorrect = true;
+      }
+    }
+    return isCorrect;
+  }
+
+  void increaseScore() {
+    setState(() {
+      _score++;
+    });
   }
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => GamemodeModel());
-    loadQuestions().then((_) {
-      if (questions.isNotEmpty) {
-        _startTimer();
-      }
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
+
+    // -- CHANGED: Configure game callbacks here --
+    _dinoGame = DinoGame(
+      onGameOver: () {
+        if (mounted) {
+          setState(() => _gameOver = true);
+        }
+      },
+      onSizeChange: (size) {
+        if (mounted) {
+          setState(() => _dinoSize = size);
+        }
+      },
+      onTimerUpdate: (timeLeft) {
+        // The game updates the widget's time display
+        if (mounted) {
+          setState(() => _displayTime = timeLeft);
+        }
+      },
+    );
+    loadQuestions();
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
     _model.dispose();
     super.dispose();
   }
 
-  void _startTimer() {
-    _timer?.cancel();
-    setState(() {
-      _timeLeft = 20;
-      _gameOver = false;
-    });
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (_timeLeft > 0) {
-        setState(() {
-          _timeLeft--;
-        });
-      } else {
-        timer.cancel();
-        setState(() {
-          _gameOver = true;
-        });
-      }
-    });
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _model = createModel(context, () => GamemodeModel());
+  //   loadQuestions().then((_) {
+  //     if (questions.isNotEmpty) {
+  //       _startTimer();
+  //     }
+  //   });
+
+  //   // Initialize the game instance
+  //   _dinoGame = DinoGame(
+  //     onGameOver: () {
+  //       setState(() {
+  //         _gameOver = true;
+  //       });
+  //     },
+  //     onSizeChange: (size) {
+  //       setState(() {
+  //         _dinoSize = size;
+  //       });
+  //     },
+  //     onTimerUpdate: (timeLeft) {
+  //       // This callback is called by the game to update timer
+  //       // We don't need to do anything here as the timer is managed in the widget
+  //     },
+  //   );
+
+  //   WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
+  // }
+
+  // @override
+  // void dispose() {
+  //   _timer?.cancel();
+  //   _model.dispose();
+  //   super.dispose();
+  // }
+
+  // void _startTimer() {
+  //   _timer?.cancel();
+  //   setState(() {
+  //     _timeLeft = 15;
+  //     _gameOver = false;
+  //   });
+  //   _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+  //     if (_timeLeft > 0) {
+  //       setState(() {
+  //         _timeLeft--;
+  //       });
+  //       // Update the game's timer so it knows when to spawn obstacles
+  //       _dinoGame._onTick();
+  //     } else {
+  //       timer.cancel();
+  //       setState(() {
+  //         _gameOver = true;
+  //       });
+  //     }
+  //   });
+  // }
 
   void showNext() {
     if (currentIndex < questions.length - 1) {
       setState(() {
+        _model.checkboxValue1 = false;
+        _model.checkboxValue2 = false;
+        _model.checkboxValue3 = false;
+        _model.checkboxValue4 = false;
         currentIndex++;
         _gameOver = false;
-        _timeLeft = 20;
+        //_timeLeft = 20;
       });
-      _startTimer();
+      print('currentIndex: $currentIndex');
+      _dinoGame.resetGameForNewQuestion();
+      // Reset obstacle spawn flag for next question
+      // _dinoGame.resetObstacleSpawn();
+      // _startTimer();
+    } else {
+      // Handle quiz completion
+      print("End of quiz!");
+      // You might want to navigate away or show a final score screen here
+      setState(() => _gameOver = true);
     }
   }
 
@@ -220,7 +340,7 @@ class _GamemodeWidgetState extends State<GamemodeWidget> {
                     boxShadow: [
                       BoxShadow(
                         blurRadius: 8,
-                        color: Color(0x33000000),
+                        color: Color.fromARGB(255, 255, 255, 255),
                         offset: Offset(
                           0,
                           4,
@@ -242,23 +362,24 @@ class _GamemodeWidgetState extends State<GamemodeWidget> {
                       width: 2,
                     ),
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.games_rounded,
-                            color: FlutterFlowTheme.of(context).primary,
-                            size: 32,
-                          ),
-                        ].divide(SizedBox(width: 8)),
-                      )
-                    ].divide(SizedBox(height: 12)),
-                  ),
+                  child: GameWidget(game: _dinoGame),
+                  // child: Column(
+                  //   mainAxisSize: MainAxisSize.max,
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     Row(
+                  //       mainAxisSize: MainAxisSize.max,
+                  //       mainAxisAlignment: MainAxisAlignment.center,
+                  //       children: [
+                  //         Icon(
+                  //           Icons.games_rounded,
+                  //           color: FlutterFlowTheme.of(context).primary,
+                  //           size: 32,
+                  //         ),
+                  //       ].divide(SizedBox(width: 8)),
+                  //     )
+                  //   ].divide(SizedBox(height: 12)),
+                  // ),
                 ),
               ),
               Expanded(
@@ -278,9 +399,9 @@ class _GamemodeWidgetState extends State<GamemodeWidget> {
                         )
                       : Column(
                           children: [
-                            Text('Time left: $_timeLeft seconds',
-                                style: TextStyle(fontSize: 20)),
-                            SizedBox(height: 16),
+                            // Text('Time left: $_timeLeft seconds',
+                            //     style: TextStyle(fontSize: 20)),
+                            // SizedBox(height: 16),
                             Expanded(
                               child: Container(
                                 width: double.infinity,
@@ -499,7 +620,15 @@ class _GamemodeWidgetState extends State<GamemodeWidget> {
                   ),
                   child: FFButtonWidget(
                     onPressed: () {
-                      showNext();
+                      //showNext();
+                      if (checkAnswer()) {
+                        increaseScore();
+                        _dinoGame.increaseDinoSize();
+                        showNext();
+                      } else {
+                        _dinoGame.reduceDinoSize();
+                        showNext();
+                      }
                       print('Button pressed ...');
                     },
                     text: 'Submit Answer',

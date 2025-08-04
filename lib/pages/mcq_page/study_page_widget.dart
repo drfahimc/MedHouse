@@ -1,5 +1,7 @@
 //import 'dart:nativewrappers/_internal/vm/lib/internal_patch.dart';
 
+import 'package:med_house/backend/game/dino_run.dart';
+
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -94,9 +96,103 @@ class _StudyPageWidgetState extends State<StudyPageWidget> {
 
   Future<void> loadQuestions() async {
     final fetched = await fetchMcqQuestions();
-    print('Fetched questions: $fetched');
-    print('Fetched questions: ${fetched.map((q) => q.question).toList()}');
+    //print('Fetched questions: $fetched');
+    //print('Fetched questions: ${fetched.map((q) => q.question).toList()}');
     setState(() => questions = fetched);
+  }
+
+  Future<void> showRightOrWrong(bool isRight) async {
+    String title = isRight ? 'Correct' : 'Wrong ';
+    await showDialog(
+        context: context,
+        builder: (context) => Dialog(
+              child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.8,
+                  maxHeight: MediaQuery.of(context).size.height * 0.3,
+                ),
+                decoration: BoxDecoration(
+                  color: isRight
+                      ? const Color.fromARGB(214, 3, 91, 6)
+                      : const Color.fromARGB(228, 123, 12, 4),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: isRight
+                        ? const Color.fromARGB(214, 3, 91, 6)
+                        : const Color.fromARGB(228, 123, 12, 4),
+                    width: 2,
+                  ),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '$title',
+                        textAlign: TextAlign.center,
+                        textScaler: TextScaler.linear(1.5),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontFamily: "Bodoni"),
+                      ),
+                      SizedBox(height: 20),
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          await showExplanation();
+                          showNext();
+                        },
+                        child: Text(
+                          'Show Explanation',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ));
+  }
+
+  Future<bool> showExplanation() async {
+    bool isClosed = false;
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Explanation',
+          style: TextStyle(color: Colors.white),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        backgroundColor: Color.fromARGB(255, 0, 27, 54),
+        scrollable: true,
+        content: Text(
+          questions[currentIndex].explanation ?? '',
+          style: TextStyle(color: Colors.white, fontFamily: "Bodoni"),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              isClosed = true;
+              Navigator.pop(context);
+            },
+            child: Text(
+              'Close',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+    return isClosed;
   }
 
   @override
@@ -116,18 +212,137 @@ class _StudyPageWidgetState extends State<StudyPageWidget> {
 
   void showNext() {
     if (currentIndex < questions.length - 1) {
-      setState(() => currentIndex++);
+      setState(() {
+        _model.checkboxValue1 = false;
+        _model.checkboxValue2 = false;
+        _model.checkboxValue3 = false;
+        _model.checkboxValue4 = false;
+        currentIndex++;
+        print('currentIndex: $currentIndex');
+        print(
+            'questions[currentIndex].correctAnswer: ${questions[currentIndex].correctAnswer}');
+        //print('questions[currentIndex].options: ${questions[currentIndex].options}');
+      });
     }
   }
 
-  void showPrevious(){
-    if(currentIndex > 0){
+  void showPrevious() {
+    if (currentIndex > 0) {
       setState(() => currentIndex--);
     }
   }
 
+  void submitAnswer() {
+    if (_model.checkboxValue1 == true) {
+      print('Option 1 selected');
+    }
+    if (_model.checkboxValue2 == true) {
+      print('Option 2 selected');
+    }
+    if (_model.checkboxValue3 == true) {
+      print('Option 3 selected');
+    }
+    if (_model.checkboxValue4 == true) {
+      print('Option 4 selected');
+    }
+  }
+
+  bool checkAnswer() {
+    bool isCorrect = false;
+    if (_model.checkboxValue1 == true) {
+      if (questions[currentIndex].correctAnswer ==
+          questions[currentIndex].options[0]) {
+        isCorrect = true;
+      }
+    }
+    if (_model.checkboxValue2 == true) {
+      if (questions[currentIndex].correctAnswer ==
+          questions[currentIndex].options[1]) {
+        isCorrect = true;
+      }
+    }
+    if (_model.checkboxValue3 == true) {
+      if (questions[currentIndex].correctAnswer ==
+          questions[currentIndex].options[2]) {
+        isCorrect = true;
+      }
+    }
+    if (_model.checkboxValue4 == true) {
+      if (questions[currentIndex].correctAnswer ==
+          questions[currentIndex].options[3]) {
+        isCorrect = true;
+      }
+    }
+    print('isCorrect: $isCorrect');
+    return isCorrect;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Check if questions are loaded
+    if (questions.isEmpty) {
+      return Scaffold(
+        key: scaffoldKey,
+        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+        appBar: AppBar(
+          backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+          automaticallyImplyLeading: false,
+          leading: FlutterFlowIconButton(
+            borderColor: FlutterFlowTheme.of(context).alternate,
+            borderRadius: 20,
+            borderWidth: 2,
+            buttonSize: 40,
+            icon: Icon(
+              Icons.chevron_left,
+              color: FlutterFlowTheme.of(context).primaryText,
+              size: 24,
+            ),
+            onPressed: () async {
+              context.safePop();
+            },
+          ),
+          title: Text(
+            'MCQ Quiz',
+            style: FlutterFlowTheme.of(context).headlineMedium.override(
+                  font: GoogleFonts.figtree(
+                    fontWeight: FontWeight.w600,
+                    fontStyle:
+                        FlutterFlowTheme.of(context).headlineMedium.fontStyle,
+                  ),
+                  letterSpacing: 0.0,
+                  fontWeight: FontWeight.w600,
+                  fontStyle:
+                      FlutterFlowTheme.of(context).headlineMedium.fontStyle,
+                ),
+          ),
+          actions: [],
+          centerTitle: true,
+          elevation: 0,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    FlutterFlowTheme.of(context).primary,
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Loading questions...',
+                style: FlutterFlowTheme.of(context).bodyMedium,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     final q = questions[currentIndex];
 
     return GestureDetector(
@@ -409,7 +624,13 @@ class _StudyPageWidgetState extends State<StudyPageWidget> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           FFButtonWidget(
-                            onPressed: () {
+                            onPressed: () async {
+                              submitAnswer();
+                              if (checkAnswer()) {
+                                await showRightOrWrong(true);
+                              } else {
+                                await showRightOrWrong(false);
+                              }
                               print('Button pressed ...');
                             },
                             text: 'Submit Answer',
